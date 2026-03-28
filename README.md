@@ -1,7 +1,11 @@
 # segment-tree
-Segment tree for range sum/min/max queries. Zero dependencies.
+
+Segment tree with lazy propagation.""".
+
+Zero dependencies. Python 3.8+.
+
 ## Usage
+
 ```bash
-python3 segment_tree.py --demo
-python3 segment_tree.py "1,3,5,7,9" min  # interactive
+python3 segment_tree.py --help
 ```

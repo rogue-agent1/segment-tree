@@ -1,42 +1,28 @@
 #!/usr/bin/env python3
-"""Segment tree for range sum/min/max queries with point updates."""
+"""segment_tree - Segment tree with lazy propagation."""
 import sys
-
 class SegTree:
-    def __init__(self, data, op='sum'):
-        self.n = len(data)
-        self.op = op
-        self.fn = {'sum': lambda a,b: a+b, 'min': min, 'max': max}[op]
-        self.identity = {'sum': 0, 'min': float('inf'), 'max': float('-inf')}[op]
-        self.tree = [self.identity] * (2 * self.n)
-        for i in range(self.n): self.tree[self.n + i] = data[i]
-        for i in range(self.n - 1, 0, -1): self.tree[i] = self.fn(self.tree[2*i], self.tree[2*i+1])
-    def update(self, i, val):
-        i += self.n; self.tree[i] = val
-        while i > 1: i //= 2; self.tree[i] = self.fn(self.tree[2*i], self.tree[2*i+1])
-    def query(self, l, r):
-        res = self.identity; l += self.n; r += self.n + 1
-        while l < r:
-            if l & 1: res = self.fn(res, self.tree[l]); l += 1
-            if r & 1: r -= 1; res = self.fn(res, self.tree[r])
-            l //= 2; r //= 2
-        return res
-
-if __name__ == '__main__':
-    if '--demo' in sys.argv:
-        data = [1, 3, 5, 7, 9, 11]
-        for op in ('sum', 'min', 'max'):
-            st = SegTree(data, op)
-            print(f"{op}([1..5]={data}): range(1,4)={st.query(1,4)}")
-    else:
-        data = list(map(int, sys.argv[1].split(','))) if len(sys.argv) > 1 else [1,2,3,4,5]
-        op = sys.argv[2] if len(sys.argv) > 2 else 'sum'
-        st = SegTree(data, op)
-        print(f"SegTree ({op}) data={data}. Commands: query <l> <r>, update <i> <val>, quit")
-        while True:
-            try: line = input('> ').split()
-            except EOFError: break
-            if not line: continue
-            if line[0] == 'quit': break
-            elif line[0] == 'query': print(st.query(int(line[1]), int(line[2])))
-            elif line[0] == 'update': st.update(int(line[1]), int(line[2])); print("OK")
+    def __init__(s,data):
+        s.n=len(data);s.tree=[0]*(4*s.n);s.lazy=[0]*(4*s.n);s._build(data,1,0,s.n-1)
+    def _build(s,d,v,l,r):
+        if l==r:s.tree[v]=d[l];return
+        m=(l+r)//2;s._build(d,2*v,l,m);s._build(d,2*v+1,m+1,r);s.tree[v]=s.tree[2*v]+s.tree[2*v+1]
+    def _push(s,v,l,r):
+        if s.lazy[v]:
+            m=(l+r)//2;s.tree[2*v]+=s.lazy[v]*(m-l+1);s.tree[2*v+1]+=s.lazy[v]*(r-m)
+            s.lazy[2*v]+=s.lazy[v];s.lazy[2*v+1]+=s.lazy[v];s.lazy[v]=0
+    def update(s,ql,qr,val,v=1,l=0,r=None):
+        if r is None:r=s.n-1
+        if ql>r or qr<l:return
+        if ql<=l and r<=qr:s.tree[v]+=val*(r-l+1);s.lazy[v]+=val;return
+        s._push(v,l,r);m=(l+r)//2;s.update(ql,qr,val,2*v,l,m);s.update(ql,qr,val,2*v+1,m+1,r)
+        s.tree[v]=s.tree[2*v]+s.tree[2*v+1]
+    def query(s,ql,qr,v=1,l=0,r=None):
+        if r is None:r=s.n-1
+        if ql>r or qr<l:return 0
+        if ql<=l and r<=qr:return s.tree[v]
+        s._push(v,l,r);m=(l+r)//2;return s.query(ql,qr,2*v,l,m)+s.query(ql,qr,2*v+1,m+1,r)
+if __name__=="__main__":
+    data=[1,3,5,7,9,11];st=SegTree(data);print(f"Data: {data}")
+    print(f"Sum [1,3]: {st.query(1,3)}");st.update(1,3,10);print(f"After +10 on [1,3]:")
+    print(f"Sum [1,3]: {st.query(1,3)}");print(f"Sum [0,5]: {st.query(0,5)}")
