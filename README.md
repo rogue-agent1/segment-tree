@@ -1,6 +1,6 @@
-# segment-tree
+# segment-tree2
 
-Segment tree for range queries
+Segment Tree with Lazy Propagation. Zero-dependency, single-file Python CLI.
 
 ## Usage
 
@@ -8,7 +8,6 @@ Segment tree for range queries
 python3 segment_tree.py --help
 ```
 
-## Features
+## License
 
-- Zero dependencies (Python 3.8+)
-- Single file implementation
+MIT
