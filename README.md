@@ -1,11 +1,3 @@
-# segment-tree
-
-Segment tree for range queries and updates.
-
-## Usage
-
-```bash
-python3 segment_tree.py test
-```
-
-Zero dependencies. Python 3.8+.
+# segment_tree
+Segment tree — range queries (sum, min, max) with point updates.
+Single-file Python, zero dependencies.
