@@ -1,13 +1,9 @@
-# segment-tree2
+# segment_tree
 
-Segment Tree with Lazy Propagation. Zero-dependency, single-file Python CLI.
-
-## Usage
+Segment tree with lazy propagation, range sum/min/max queries, point/range updates
 
 ```bash
-python3 segment_tree.py --help
+python3 segment_tree.py test
 ```
 
-## License
-
-MIT
+Zero deps. Python 3.8+.
